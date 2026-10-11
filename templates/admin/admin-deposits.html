@@ -746,15 +746,15 @@
 
                 <!-- Bước 2: Nhập số tiền -->
                 <div class="form-group">
-                    <label><i class="fas fa-coins" style="margin-right:5px;"></i>Số tiền nạp (VNĐ)</label>
-                    <input type="number" class="form-control" id="depositAmount" placeholder="Ví dụ: 100000" min="1000"
-                        step="1000">
+                    <label><i class="fas fa-coins" style="margin-right:5px;"></i>Số tiền (VNĐ) <small style="color:#888; font-weight:normal;">(Nhập số âm để trừ tiền, ví dụ: -5000)</small></label>
+                    <input type="number" class="form-control" id="depositAmount" placeholder="Ví dụ: 100000 hoặc -5000"
+                        step="any">
                 </div>
 
                 <!-- Ghi chú -->
                 <div class="form-group">
-                    <label><i class="fas fa-sticky-note" style="margin-right:5px;"></i>Ghi chú</label>
-                    <input type="text" class="form-control" id="depositNote" placeholder="Admin nạp tiền thủ công"
+                    <label><i class="fas fa-sticky-note" style="margin-right:5px;"></i>Ghi chú / Lý do</label>
+                    <input type="text" class="form-control" id="depositNote" placeholder="Admin nạp tiền thủ công / Lý do trừ tiền"
                         value="Admin nạp tiền thủ công">
                 </div>
             </div>
@@ -775,6 +775,7 @@
 
         /* ===== INVOICE MODAL ===== */
         let selectedUserId = null;
+        let selectedUserCurrentBalance = 0;
         let searchTimer = null;
 
         function openInvoiceModal() {
@@ -793,6 +794,7 @@
 
         function resetModal() {
             selectedUserId = null;
+            selectedUserCurrentBalance = 0;
             document.getElementById('userSearchInput').value = '';
             document.getElementById('depositAmount').value = '';
             document.getElementById('depositNote').value = 'Admin nạp tiền thủ công';
@@ -838,6 +840,7 @@
 
         function selectUser(id, username, email, balance) {
             selectedUserId = id;
+            selectedUserCurrentBalance = parseFloat(balance) || 0;
             document.getElementById('userSearchInput').value = username;
             document.getElementById('userDropdown').classList.remove('open');
 
@@ -845,7 +848,7 @@
             document.getElementById('selectedUserAvatar').textContent = username.charAt(0).toUpperCase();
             document.getElementById('selectedUserName').textContent = username;
             document.getElementById('selectedUserEmail').textContent = email;
-            document.getElementById('selectedUserBalance').textContent = formatMoney(balance) + 'đ';
+            document.getElementById('selectedUserBalance').textContent = formatMoney(selectedUserCurrentBalance) + 'đ';
             card.classList.add('show');
             document.getElementById('depositAmount').focus();
         }
@@ -856,12 +859,24 @@
                 showAlert('Vui lòng chọn khách hàng', 'error');
                 return;
             }
-            const amount = parseFloat(document.getElementById('depositAmount').value);
-            if (!amount || amount < 1000) {
-                showAlert('Số tiền tối thiểu là 1.000đ', 'error');
+            const amountVal = document.getElementById('depositAmount').value.trim();
+            if (!amountVal) {
+                showAlert('Vui lòng nhập số tiền', 'error');
                 return;
             }
-            const note = document.getElementById('depositNote').value.trim() || 'Admin nạp tiền thủ công';
+            const amount = parseFloat(amountVal);
+            if (isNaN(amount) || amount === 0) {
+                showAlert('Số tiền không hợp lệ hoặc phải khác 0', 'error');
+                return;
+            }
+
+            if (amount > 0 && amount < 2000) {
+                showAlert('Số tiền nạp tối thiểu là 2.000 VNĐ (Do quy định hạn mức ứng dụng Ngân hàng)!', 'error');
+                return;
+            }
+
+            const defaultNote = amount < 0 ? 'Admin trừ tiền / điều chỉnh số dư' : 'Admin nạp tiền thủ công';
+            const note = document.getElementById('depositNote').value.trim() || defaultNote;
 
             const btn = document.getElementById('submitDepositBtn');
             btn.disabled = true;
@@ -872,17 +887,25 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: selectedUserId, amount, note })
             })
-                .then(r => r.json())
-                .then(data => {
+                .then(r => r.json().then(data => ({ ok: r.ok, data })))
+                .then(({ ok, data }) => {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận nạp tiền';
                     if (data.success) {
-                        showAlert(`✅ Nạp ${formatMoney(amount)}đ cho <strong>${escHtml(data.username)}</strong> thành công! Mã GD: <strong>${data.tx_code}</strong>`, 'success');
-                        // Update balance badge
-                        const curBal = parseFloat(document.getElementById('selectedUserBalance').textContent.replace(/[^0-9]/g, ''));
-                        document.getElementById('selectedUserBalance').textContent = formatMoney(curBal + amount) + 'đ';
+                        if (amount < 0) {
+                            showAlert(`✅ Đã trừ <strong>${formatMoney(Math.abs(amount))}đ</strong> của <strong>${escHtml(data.username)}</strong> thành công! Số dư mới: <strong>${formatMoney(data.new_balance)}đ</strong> (Mã GD: <strong>${data.tx_code}</strong>)`, 'success');
+                        } else {
+                            showAlert(`✅ Nạp <strong>${formatMoney(amount)}đ</strong> cho <strong>${escHtml(data.username)}</strong> thành công! Số dư mới: <strong>${formatMoney(data.new_balance)}đ</strong> (Mã GD: <strong>${data.tx_code}</strong>)`, 'success');
+                        }
+                        // Cập nhật hiển thị số dư mới
+                        if (data.new_balance !== undefined) {
+                            selectedUserCurrentBalance = parseFloat(data.new_balance);
+                        } else {
+                            selectedUserCurrentBalance += amount;
+                        }
+                        document.getElementById('selectedUserBalance').textContent = formatMoney(selectedUserCurrentBalance) + 'đ';
                         document.getElementById('depositAmount').value = '';
-                        loadDeposits(); // reload table;
+                        loadDeposits(); // reload table
                     } else {
                         showAlert(data.error || 'Có lỗi xảy ra', 'error');
                     }
@@ -907,7 +930,9 @@
         }
 
         function formatMoney(n) {
-            return Number(n || 0).toLocaleString('vi-VN');
+            const val = Number(n || 0);
+            const sign = val < 0 ? '-' : '';
+            return sign + Math.abs(val).toLocaleString('vi-VN');
         }
 
         function escHtml(s) {

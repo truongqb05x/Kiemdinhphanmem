@@ -242,15 +242,33 @@ def purchase():
     if 'user_id' not in session:
         return jsonify({'success': False, 'error': 'Vui lòng đăng nhập để tiếp tục'}), 401
     
-    data = request.get_json()
+    data = request.get_json() or {}
     product_id = data.get('product_id')
+    raw_quantity = data.get('quantity', 1)
+
+    # 1. Chỉ trường hợp nhập số thực thì thông báo R1
+    if isinstance(raw_quantity, (float, bool)):
+        return jsonify({'success': False, 'error': 'Số lượng mua phải là số nguyên lớn hơn 0'}), 400
+
     try:
-        quantity = int(data.get('quantity', 1))
+        if isinstance(raw_quantity, str):
+            s = raw_quantity.strip()
+            # Kiểm tra số thực (chứa dấu chấm hoặc phẩy và là số)
+            if ('.' in s or ',' in s) and s.replace('.', '', 1).replace(',', '', 1).replace('-', '', 1).isdigit():
+                return jsonify({'success': False, 'error': 'Số lượng mua phải là số nguyên lớn hơn 0'}), 400
+            # Các trường hợp không hợp lệ khác (chữ, ký hiệu, <= 0)
+            if not s.isdigit() or int(s) <= 0:
+                return jsonify({'success': False, 'error': 'Thông báo: Số lượng không hợp lệ.'}), 400
+            quantity = int(s)
+        else:
+            quantity = int(raw_quantity)
+            if quantity <= 0:
+                return jsonify({'success': False, 'error': 'Thông báo: Số lượng không hợp lệ.'}), 400
     except (ValueError, TypeError):
-        return jsonify({'success': False, 'error': 'Số lượng không hợp lệ'}), 400
+        return jsonify({'success': False, 'error': 'Thông báo: Số lượng không hợp lệ.'}), 400
     
-    if not product_id or quantity < 1:
-        return jsonify({'success': False, 'error': 'Thông tin không hợp lệ'}), 400
+    if not product_id:
+        return jsonify({'success': False, 'error': 'Thông báo: Số lượng không hợp lệ.'}), 400
     
     conn = get_db_connection()
     if not conn:
@@ -274,19 +292,20 @@ def purchase():
         if not product:
             return jsonify({'success': False, 'error': 'Sản phẩm không tồn tại hoặc đã ngừng bán'}), 404
         
-        # Calculate total
-        total_amount = float(product['price']) * quantity
-        
-        # Check balance
+        # 1. Check balance (C4) trước
         if float(user['balance']) < total_amount:
-            return jsonify({'success': False, 'error': f'Số dư không đủ. Bạn cần thêm {int(total_amount - float(user["balance"])):,}đ'}), 400
-        
-        # Check stock (we will lock the exact accounts later)
+            conn.rollback()
+            missing = int(total_amount - float(user['balance']))
+            # R4: Thông báo: Số dư không đủ, bạn cần nạp thêm ***đ để hoàn tất.
+            return jsonify({'success': False, 'error': f'Thông báo: Số dư không đủ, bạn cần nạp thêm {missing:,}đ để hoàn tất.'}), 400
+
+        # 2. Check stock (C3) sau
         cursor.execute("SELECT COUNT(*) as available FROM accounts WHERE product_id = %s AND status = 'live'", (product_id,))
         stock_check = cursor.fetchone()
         if stock_check['available'] < quantity:
             conn.rollback()
-            return jsonify({'success': False, 'error': f'Sản phẩm chỉ còn {stock_check["available"]} tài khoản'}), 400
+            # R5: Sản phẩm chỉ còn lại x tài khoản.
+            return jsonify({'success': False, 'error': f'Sản phẩm chỉ còn lại {stock_check["available"]} tài khoản.'}), 400
         
         # Generate unique order code
         import random
@@ -629,6 +648,45 @@ def get_deposits():
         conn.close()
         
         return jsonify({'success': True, 'deposits': deposits})
+    except Exception as e:
+        if conn: conn.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/deposits', methods=['POST'])
+def create_deposit():
+    data = request.get_json(silent=True) or {}
+    amount = data.get('amount')
+    if amount is None:
+        return jsonify({'success': False, 'error': 'Vui lòng nhập số tiền'}), 400
+    try:
+        amount = float(amount)
+    except (ValueError, TypeError):
+        return jsonify({'success': False, 'error': 'Số tiền không hợp lệ'}), 400
+
+    if amount < 2000:
+        return jsonify({'success': False, 'error': 'Số tiền nạp tối thiểu là 2.000 VNĐ'}), 400
+
+    user_id = session.get('user_id') or data.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'error': 'Vui lòng đăng nhập để nạp tiền'}), 401
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'success': False, 'error': 'Database connection failed'}), 500
+
+    try:
+        cursor = conn.cursor(dictionary=True)
+        import uuid
+        tx_code = 'DEP' + uuid.uuid4().hex[:8].upper()
+        cursor.execute(
+            """INSERT INTO deposits (user_id, amount, method, transaction_id, status, created_at)
+               VALUES (%s, %s, %s, %s, 'pending', NOW())""",
+            (user_id, amount, data.get('method', 'bank'), tx_code)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'tx_code': tx_code, 'amount': amount})
     except Exception as e:
         if conn: conn.close()
         return jsonify({'success': False, 'error': str(e)}), 500

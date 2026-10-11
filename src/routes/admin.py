@@ -690,22 +690,26 @@ def search_users():
     finally:
         if conn: conn.close()
 
+@admin_bp.route('/api/deposits', methods=['POST'])
 @admin_bp.route('/api/deposits/create', methods=['POST'])
 @admin_required
 def create_deposit():
-    data = request.json
+    data = request.json or {}
     user_id = data.get('user_id')
     amount = data.get('amount')
-    note = data.get('note', 'Admin nạp tiền thủ công')
+    note = (data.get('note') or '').strip()
 
-    if not user_id or not amount:
+    if not user_id or amount is None:
         return jsonify({'success': False, 'error': 'Thiếu thông tin bắt buộc'}), 400
     try:
         amount = float(amount)
-        if amount <= 0:
-            return jsonify({'success': False, 'error': 'Số tiền phải lớn hơn 0'}), 400
+        if amount == 0:
+            return jsonify({'success': False, 'error': 'Số tiền không được bằng 0'}), 400
     except (ValueError, TypeError):
         return jsonify({'success': False, 'error': 'Số tiền không hợp lệ'}), 400
+
+    if 0 < amount < 2000:
+        return jsonify({'success': False, 'error': 'Số tiền nạp tối thiểu là 2.000 VNĐ'}), 400
 
     conn = get_db_connection()
     if not conn:
@@ -718,8 +722,14 @@ def create_deposit():
         if not user:
             return jsonify({'success': False, 'error': 'Không tìm thấy người dùng'}), 404
 
+        cur_balance = float(user['balance'] or 0.0)
+        adjustment_amount = amount
+        new_balance = cur_balance + adjustment_amount
+
         import uuid
-        tx_code = 'ADM' + uuid.uuid4().hex[:8].upper()
+        tx_code = ('ADMD' if amount < 0 else 'ADM') + uuid.uuid4().hex[:8].upper()
+        default_note = 'Admin trừ tiền / điều chỉnh số dư' if amount < 0 else 'Admin nạp tiền thủ công'
+        final_note = note if note else default_note
 
         # Insert deposit record with status 'completed'
         cursor.execute(
@@ -729,12 +739,23 @@ def create_deposit():
         )
         # Update user balance
         cursor.execute(
-            "UPDATE users SET balance = balance + %s WHERE id = %s",
-            (amount, user_id)
+            "UPDATE users SET balance = %s WHERE id = %s",
+            (new_balance, user_id)
+        )
+        # Log to balance_history with type = 'admin_adjustment'
+        cursor.execute(
+            """INSERT INTO balance_history (user_id, amount_before, amount_change, amount_after, type, description, created_at)
+               VALUES (%s, %s, %s, %s, 'admin_adjustment', %s, NOW())""",
+            (user_id, cur_balance, adjustment_amount, new_balance, final_note)
         )
         conn.commit()
         cursor.close()
-        return jsonify({'success': True, 'tx_code': tx_code, 'username': user['username']})
+        return jsonify({
+            'success': True,
+            'tx_code': tx_code,
+            'username': user['username'],
+            'new_balance': new_balance
+        })
     except Exception as e:
         if conn: conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500

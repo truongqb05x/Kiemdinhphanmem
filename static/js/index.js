@@ -252,7 +252,7 @@ async function renderProducts(path = '/') {
                                                 <div class="product-btn-group">
                                                     ${p.stock <= 0 
                                                         ? `<button class="btn btn-buy" disabled style="background: #9ca3af; cursor: not-allowed; box-shadow: none; pointer-events: none;"><i class="fas fa-ban"></i> HẾT HÀNG</button>` 
-                                                        : `<button class="btn btn-buy" onclick="openCheckoutFromData(${p.id}, '${p.name}', '${parseFloat(p.price).toLocaleString('vi-VN')}đ', '${p.description}')"><i class="fas fa-shopping-cart"></i> MUA</button>`
+                                                        : `<button class="btn btn-buy" onclick="openCheckoutFromData(${p.id}, '${p.name}', '${parseFloat(p.price).toLocaleString('vi-VN')}đ', '${p.description}', ${p.stock})"><i class="fas fa-shopping-cart"></i> MUA</button>`
                                                     }
                                                     <button class="btn btn-detail" onclick="openImageModal('${p.image_url}', '${p.name}')">Chi tiết</button>
                                                 </div>
@@ -323,13 +323,16 @@ function closeImageModal() {
     document.body.style.overflow = 'auto';
 }
 
-function openCheckoutFromData(productId, title, price, description) {
+let currentProductStock = 0;
+
+function openCheckoutFromData(productId, title, price, description, stock = 999999) {
     if (!currentUser) {
         window.location.href = '/login';
         return;
     }
-    // Store product ID
+    // Store product ID and stock
     currentProductId = productId;
+    currentProductStock = parseInt(stock) || 0;
     // Extract price number
     currentPrice = parseInt(price.replace(/[^0-9]/g, ''));
     quantity = 1;
@@ -365,6 +368,9 @@ function openCheckout(element) {
     const title = card.querySelector('h3').textContent;
     const price = card.querySelector('.product-price').textContent;
     const description = card.querySelector('.product-description').textContent;
+    const metaText = card.querySelector('.product-meta')?.textContent || '';
+    const stockMatch = metaText.match(/Kho hàng:\s*(\d+)/);
+    currentProductStock = stockMatch ? parseInt(stockMatch[1]) : 999999;
 
     // Extract price number
     currentPrice = parseInt(price.replace(/[^0-9]/g, ''));
@@ -390,15 +396,21 @@ function closeCheckout() {
 }
 
 function increaseQuantity() {
-    quantity++;
-    document.getElementById('quantityInput').value = quantity;
+    const input = document.getElementById('quantityInput');
+    const val = String(input.value).trim();
+    let current = /^[1-9]\d*$/.test(val) ? parseInt(val, 10) : 1;
+    quantity = current + 1;
+    input.value = quantity;
     updateTotal();
 }
 
 function decreaseQuantity() {
-    if (quantity > 1) {
-        quantity--;
-        document.getElementById('quantityInput').value = quantity;
+    const input = document.getElementById('quantityInput');
+    const val = String(input.value).trim();
+    let current = /^[1-9]\d*$/.test(val) ? parseInt(val, 10) : 1;
+    if (current > 1) {
+        quantity = current - 1;
+        input.value = quantity;
         updateTotal();
     }
 }
@@ -409,16 +421,73 @@ function updateTotal() {
     document.getElementById('total').textContent = subtotal.toLocaleString('vi-VN') + 'đ';
 }
 
-function manualQuantityInput(input) {
-    let val = parseInt(input.value);
-    if (isNaN(val) || val < 1) {
-        quantity = 1;
-        input.value = 1;
-    } else {
-        quantity = val;
-        input.value = val;
+function validateQuantityInput(input) {
+    const rawStr = (input.value !== undefined ? String(input.value) : '').trim();
+    const normalizedStr = rawStr.replace(',', '.');
+
+    // 1. Kiểm tra trường hợp hợp lệ: Chuỗi số nguyên dương > 0
+    if (/^[1-9]\d*$/.test(rawStr)) {
+        const validQty = parseInt(rawStr, 10);
+        quantity = validQty;
+        input.value = validQty;
+        updateTotal();
+
+        // Bước 1 (Check Số dư trước): Số dư tài khoản >= Giá trị đơn hàng (C4)
+        const totalAmount = currentPrice * validQty;
+        const userBalance = parseFloat(currentUser?.balance || 0);
+        if (userBalance < totalAmount) {
+            // R4: Thông báo: Số dư không đủ, bạn cần nạp thêm ***đ để hoàn tất.
+            const missingAmount = Math.round(totalAmount - userBalance);
+            showNotify('error', 'Lỗi', `Thông báo: Số dư không đủ, bạn cần nạp thêm ${missingAmount.toLocaleString('vi-VN')}đ để hoàn tất.`);
+            return false;
+        }
+
+        // Bước 2 (Check Tồn kho sau): Số lượng mua <= Tồn kho (C3)
+        if (validQty > currentProductStock) {
+            // R5: Sản phẩm chỉ còn lại x tài khoản.
+            showNotify('error', 'Lỗi', `Sản phẩm chỉ còn lại ${currentProductStock} tài khoản.`);
+            return false;
+        }
+
+        return true;
     }
+
+    // 2. CHỈ TRƯỜNG HỢP NHẬP SỐ THỰC -> Thông báo R1
+    const isFloat = (normalizedStr.includes('.') || rawStr.includes(',')) && !isNaN(Number(normalizedStr));
+
+    if (isFloat) {
+        const parsedVal = parseFloat(normalizedStr);
+        let newQty = 1;
+        if (parsedVal > 1) {
+            newQty = Math.floor(parsedVal);
+        } else {
+            newQty = 1;
+        }
+        quantity = newQty;
+        input.value = newQty;
+        updateTotal();
+        // R1: Số lượng mua phải là số nguyên lớn hơn 0
+        showNotify('error', 'Lỗi', 'Số lượng mua phải là số nguyên lớn hơn 0');
+        return false;
+    }
+
+    // 3. CÁC TRƯỜNG HỢP KHÔNG HỢP LỆ KHÁC (chữ cái, ký hiệu, số nguyên <= 0 như 0, -1, rỗng...):
+    // -> Thông báo R3: Thông báo: Số lượng không hợp lệ.
+    quantity = 1;
+    input.value = 1;
     updateTotal();
+    showNotify('error', 'Lỗi', 'Thông báo: Số lượng không hợp lệ.');
+    return false;
+}
+
+function manualQuantityInput(input) {
+    const val = (input.value !== undefined ? String(input.value) : '').trim();
+
+    // If user enters a valid positive integer, dynamically update total
+    if (/^[1-9]\d*$/.test(val)) {
+        quantity = parseInt(val, 10);
+        updateTotal();
+    }
 }
 
 let lastOrderCode = null;
@@ -429,16 +498,12 @@ async function checkout() {
         return;
     }
     
-    // Strict validation before sending to API
-    let finalQuantity = parseInt(document.getElementById('quantityInput').value);
-    if (isNaN(finalQuantity) || finalQuantity < 1) {
-        showNotify('error', 'Lỗi', 'Số lượng không hợp lệ');
-        document.getElementById('quantityInput').value = 1;
-        quantity = 1;
-        updateTotal();
+    // Strict Cause-Effect validation before sending to API
+    const input = document.getElementById('quantityInput');
+    if (!validateQuantityInput(input)) {
         return;
     }
-    quantity = finalQuantity;
+    quantity = parseInt(input.value, 10);
 
     const btn = document.querySelector('#checkoutModal .btn-checkout');
     const originalText = btn.innerHTML;
