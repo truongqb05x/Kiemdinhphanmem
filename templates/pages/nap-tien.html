@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nạp Tiền - FBStore</title>
+
+    <!-- Meta SEO Cơ Bản -->
+    <meta name="description"
+        content="Hệ thống cung cấp tài khoản Facebook, Via cổ, Clone, Fanpage, BM quảng cáo uy tín, chất lượng. Bảo hành 1 đổi 1, hỗ trợ 24/7.">
+    <meta name="keywords" content="mua via facebook, mua clone facebook, mua bm, shop acc fb, tai khoan quang cao">
+    <meta name="robots" content="index, follow">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/pages/nap-tien.css">
+    <link rel="shortcut icon" href="../../static/img/logo.png" type="image/x-icon">
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="site-topbar">
+            <div class="container topbar-container">
+                <div class="topbar-left">
+                    Chào mừng bạn đến với website bán clone Facebook giá rẻ
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-globe"></i> Vietnamese <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-wallet"></i> VND <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-links">
+                        <a href="#">Chính sách</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Liên hệ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="header-top">
+                <a href="/" class="logo">
+                    <i class="fab fa-facebook-square"></i>
+                    <span>Clonegiare.shop</span>
+                </a>
+
+                                <div class="header-actions">
+                    <div class="header-actions-inner" id="headerActionsInner">
+                        <div class="mobile-menu-close" onclick="toggleMobileHeaderMenu(event)">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="misc-container" id="miscContainer" onclick="toggleMiscMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-ellipsis-v"></i>
+                                <span>Khác</span></a>
+                            <div class="misc-dropdown" id="miscDropdown">
+                                <a href="/api">API</a>
+                                <a href="/support">Hỗ trợ</a>
+                                <a href="/blog">Blog</a>
+                            </div>
+                        </div>
+                        <div class="tools-container auth-required" id="toolsContainer" style="display: none;"
+                            onclick="toggleToolsMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-tools"></i> <span>Công
+                                    cụ</span></a>
+                            <div class="tools-dropdown" id="toolsDropdown">
+                                <a href="#/check-live">Check Live UID</a>
+                                <a href="#/random-face">Random Face</a>
+                            </div>
+                        </div>
+                        <a href="/deposit" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-wallet"></i> <span>Nạp tiền</span></a>
+                        <a href="/history" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-history"></i> <span>Lịch sử</span></a>
+                        <div class="user-profile-container">
+                            <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu(event)">?</div>
+                            <div class="user-dropdown" id="userDropdown">
+                                <a href="/profile"><i class="fas fa-user-circle"></i> Hồ sơ cá nhân</a>
+                                <a href="/history"><i class="fas fa-history"></i> Lịch sử đơn hàng</a>
+                                <a href="/deposit"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                <div class="divider"></div>
+                                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-toggle" onclick="toggleMobileHeaderMenu(event)">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <script>
+                        function toggleMobileHeaderMenu(event) {
+                            if (event) event.stopPropagation();
+                            const inner = document.getElementById('headerActionsInner');
+                            if (inner) {
+                                inner.classList.toggle('active');
+                            }
+                        }
+                        document.addEventListener('click', function(event) {
+                            const headerActionsInner = document.getElementById('headerActionsInner');
+                            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                            if (headerActionsInner && headerActionsInner.classList.contains('active')) {
+                                if (!headerActionsInner.contains(event.target) && (!mobileMenuToggle || !mobileMenuToggle.contains(event.target))) {
+                                    headerActionsInner.classList.remove('active');
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+
+
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Promotion & Layout Grid -->
+        <div class="deposit-grid">
+            <!-- Promotion Table -->
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <table class="promo-table">
+                        <thead>
+                            <tr>
+                                <th>Số tiền nạp lớn hơn hoặc bằng</th>
+                                <th>Khuyến mãi thêm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="promo-amount">10.000.000xu</td>
+                                <td class="promo-bonus">30%</td>
+                            </tr>
+                            <tr>
+                                <td class="promo-amount">5.000.000xu</td>
+                                <td class="promo-bonus">20%</td>
+                            </tr>
+                            <tr>
+                                <td class="promo-amount">3.000.000xu</td>
+                                <td class="promo-bonus">15%</td>
+                            </tr>
+                            <tr>
+                                <td class="promo-amount">1.000.000xu</td>
+                                <td class="promo-bonus">10%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notes & Bank Info -->
+            <div class="grid-bottom" style="grid-column: 1 / -1;">
+                <!-- Notes -->
+                <div class="card">
+                    <div class="card-header warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>LƯU Ý NẠP TIỀN</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="notes-list">
+                            <li>Quét Mã QR để tự động nhập nội dung. Nhập thủ công vui lòng nhập đúng nội dung ck để
+                                được cộng tự động.</li>
+                            <li class="notes-highlight">Nạp tối thiểu 10.000vnd. Nạp dưới sẽ không được cộng với bất cứ
+                                hình thức nào.</li>
+                            <li class="notes-highlight">Nạp sai nội dung bị trừ 30%</li>
+                            <li>Tự động cộng số dư sau khi nạp từ 1-5p, nếu sau khoảng thời gian này không thấy cộng vui
+                                lòng liên hệ admin.</li>
+                            <li class="notes-highlight">Chúng tôi không có chính sách hoàn tiền số dư (tránh việc r.ử.a
+                                t.i.ề.n) nên cân nhắc nạp đủ dùng. Xin cảm ơn.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Bank Transfer -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="bank-info-container">
+                            <div class="bank-details">
+                                <div class="bank-badge" id="bankBadge">...</div>
+                                <p style="font-size: 14px; color: var(--gray-color); margin-bottom: 5px;">Chủ tài khoản:
+                                    <b id="bankOwner">...</b>
+                                </p>
+                                <p
+                                    style="font-size: 18px; color: var(--primary-color); font-weight: 700; margin-bottom: 10px;">
+                                    <span id="bankNumber">...</span>
+                                    <button class="btn-copy" onclick="copyBankNumber()"><i
+                                            class="fas fa-copy"></i></button>
+                                </p>
+                                <p
+                                    style="font-size: 14px; background: #fff3f3; color: #e41e3f; padding: 5px; border-radius: 4px; display: inline-block;">
+                                    Nội dung: <b id="transferContent">FBSTORE ...</b>
+                                    <button class="btn-copy" onclick="copyTransferContent()"><i
+                                            class="fas fa-copy"></i></button>
+                                </p>
+                            </div>
+                            <div class="qr-section">
+                                <img id="qrImage" src="" alt="QR Pay" style="display:none;">
+                                <p id="qrLoading" style="color:#999;font-size:13px;"><i
+                                        class="fas fa-spinner fa-spin"></i> Đang tải QR...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposit History -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history"></i>
+                <h3>LỊCH SỬ NẠP TIỀN</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Mã GD</th>
+                                <th>Thời gian</th>
+                                <th>Số tiền</th>
+                                <th>Phương thức</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification Modal -->
+    <div class="modal-overlay" id="notifyModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Thành công!</h3>
+            <p class="modal-message" id="modalMessage">...</p>
+            <button onclick="closeModal()"
+                style="margin-top: 20px; padding: 10px 30px; border-radius: 8px; border: none; background: var(--primary-color); color: white; cursor: pointer; font-weight: 600;">Đóng</button>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col brand-col">
+                    <div class="footer-logo">
+                        <span style="font-weight: 800; font-size: 20px; color: var(--dark-color); display: block; margin-bottom: 15px;">CLONEGIARE.SHOP</span>
+                    </div>
+                    <p class="footer-desc">
+                        Hệ thống cung cấp Clone Facebook chất lượng, uy tín, giá siêu rẻ đáp ứng mọi nhu cầu của bạn...
+                    </p>
+                </div>
+                
+                <div class="footer-col contact-col">
+                    <h3 class="footer-title">Liên hệ</h3>
+                    <ul class="contact-list">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>abc@gmail.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>0123456789</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Đà Nẵng</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col link-col">
+                    <h3 class="footer-title">Liên kết</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Chính sách</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Liên hệ chúng tôi</a></li>
+                        <li><a href="/api">Tài liệu API</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom-bar">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        © All Copyrights Reserved by CLONEGIARE.SHOP
+                    </div>
+                    <div class="payment-methods">
+                        <i class="fab fa-paypal"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-discover"></i>
+                        <i class="fab fa-cc-visa"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nap-tien.js"></script>
+</body>
+
+</html>

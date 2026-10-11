@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    <meta name="keywords" content="{{ seo.keywords }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ seo.url }}">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ seo.url }}">
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:image" content="{{ seo.image }}">
+    <link rel="shortcut icon" href="../../static/img/logo.png" type="image/x-icon">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://clonegiare.shop/">
+    <meta property="twitter:title" content="Clonegiare.shop - Shop Bán Acc Facebook, Via, Clone, BM Chất Lượng Số 1">
+    <meta property="twitter:description"
+        content="Hệ thống cung cấp tài khoản Facebook uy tín, chất lượng. Bảo hành 1 đổi 1, hỗ trợ 24/7.">
+    <meta property="twitter:image" content="https://clonegiare.shop/og-image.jpg">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Clonegiare.shop",
+      "url": "https://clonegiare.shop",
+      "logo": "https://clonegiare.shop/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+84-xxx-xxx-xxx",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Clonegiare.shop",
+      "url": "https://clonegiare.shop",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://clonegiare.shop/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/pages/index.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="site-topbar">
+            <div class="container topbar-container">
+                <div class="topbar-left">
+                    Chào mừng bạn đến với website bán clone Facebook giá rẻ
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-globe"></i> Vietnamese <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-wallet"></i> VND <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-links">
+                        <a href="#">Chính sách</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Liên hệ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="header-top">
+                <a href="/" class="logo">
+                    <i class="fab fa-facebook-square"></i>
+                    <span>Clonegiare.shop</span>
+                </a>
+
+                                <div class="header-actions">
+                    <div class="header-actions-inner" id="headerActionsInner">
+                        <div class="mobile-menu-close" onclick="toggleMobileHeaderMenu(event)">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="misc-container" id="miscContainer" onclick="toggleMiscMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-ellipsis-v"></i>
+                                <span>Khác</span></a>
+                            <div class="misc-dropdown" id="miscDropdown">
+                                <a href="/api">API</a>
+                                <a href="/support">Hỗ trợ</a>
+                                <a href="/blog">Blog</a>
+                            </div>
+                        </div>
+                        <div class="tools-container auth-required" id="toolsContainer" style="display: none;"
+                            onclick="toggleToolsMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-tools"></i> <span>Công
+                                    cụ</span></a>
+                            <div class="tools-dropdown" id="toolsDropdown">
+                                <a href="#/check-live">Check Live UID</a>
+                                <a href="#/random-face">Random Face</a>
+                            </div>
+                        </div>
+                        <a href="/deposit" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-wallet"></i> <span>Nạp tiền</span></a>
+                        <a href="/history" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-history"></i> <span>Lịch sử</span></a>
+                        <div class="user-profile-container">
+                            <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu(event)">?</div>
+                            <div class="user-dropdown" id="userDropdown">
+                                <a href="/profile"><i class="fas fa-user-circle"></i> Hồ sơ cá nhân</a>
+                                <a href="/history"><i class="fas fa-history"></i> Lịch sử đơn hàng</a>
+                                <a href="/deposit"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                <div class="divider"></div>
+                                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-toggle" onclick="toggleMobileHeaderMenu(event)">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <script>
+                        function toggleMobileHeaderMenu(event) {
+                            if (event) event.stopPropagation();
+                            const inner = document.getElementById('headerActionsInner');
+                            if (inner) {
+                                inner.classList.toggle('active');
+                            }
+                        }
+                        document.addEventListener('click', function(event) {
+                            const headerActionsInner = document.getElementById('headerActionsInner');
+                            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                            if (headerActionsInner && headerActionsInner.classList.contains('active')) {
+                                if (!headerActionsInner.contains(event.target) && (!mobileMenuToggle || !mobileMenuToggle.contains(event.target))) {
+                                    headerActionsInner.classList.remove('active');
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="visually-hidden">Clonegiare.shop - Hệ thống cung cấp tài khoản Facebook, Via, Clone uy tín số 1 Việt Nam</h1>
+
+        <div class="system-announcement">
+            <div class="announcement-content">
+                <p class="text-danger"><strong>Lưu ý:</strong> Hãy đảm bảo tài khoản đăng nhập và mật khẩu của bạn không
+                    khớp với thông tin đăng nhập trên các website khác để tránh trường hợp chủ website khác sử dụng
+                    thông tin của bạn để đăng nhập vào website này!</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> WEBSITE không hoàn tiền lại với bất kỳ lý do gì nên mọi
+                    người nạp tiền đủ xài thôi nhé (hết lại nạp do auto nạp tiền chỉ mất có 30s)</p>
+                <p class="text-danger"><strong>Lưu ý:</strong> Nếu bạn nạp tiền sau 10p chưa cộng hãy báo ngay với admin
+                    để được hỗ trợ !</p>
+
+                <p class="text-primary mt-3"><strong><a href="#">Hướng Dẫn Đăng Nhập Clone An Toàn</a> — <a
+                            href="#">Chính Sách Bảo Hành</a></strong> (Vui lòng đọc kỹ trước khi mua, chúng tôi từ chối
+                    bảo hành nếu sai quy định !)</p>
+
+                <h3 class="text-zalo mt-3">Mọi thắc mắc xin vui lòng liên hệ qua <a href="https://zalo.me/0866005531"
+                        target="_blank">zalo (0866005531)</a></h3>
+
+                <p class="text-warning mt-2"><em>Đại lý cần mua Clone Facebook số lượng lớn hoặc có nhu cầu riêng biệt
+                        vui lòng inbox trực tiếp qua ZALO để trao đổi và nhận giá sỉ tốt nhất.</em></p>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="layout-left">
+                <nav style="margin-bottom: 20px;">
+                    <ul class="nav-menu" id="navMenu">
+                        <li><a href="#/" class="active" onclick="navigate('#/', event)">Tất cả sản phẩm</a></li>
+                    </ul>
+                </nav>
+                <div id="productList">
+                    <!-- Dữ liệu sản phẩm theo danh mục sẽ được tải vào đây -->
+                </div>
+            </div>
+
+            <div class="layout-right">
+                <div class="user-sidebar" id="userSidebar" style="display: flex; flex-direction: column;">
+                    <div class="sidebar-header">
+                        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+                        <div class="sidebar-user-info">
+                            <div class="sidebar-greeting">Xin chào,</div>
+                            <div class="sidebar-username" id="sidebarUsername">Khách</div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-balance-box">
+                        <div class="sidebar-label">Số dư hiện tại</div>
+                        <div class="sidebar-value highlight-blue" id="sidebarBalance">0đ</div>
+                        <a href="/deposit" class="btn btn-deposit-sidebar">Nạp tiền ngay</a>
+                    </div>
+
+                    <div class="sidebar-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-label">Tổng tiền nạp</div>
+                                <div class="stat-value" id="sidebarTotalDeposit">0đ</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-label">Đã sử dụng</div>
+                                <div class="stat-value" id="sidebarUsedBalance">0đ</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-tags"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-label">Giảm giá</div>
+                                <div class="stat-value" id="sidebarDiscount">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCheckout()">×</button>
+
+            <div class="modal-left">
+                <h2 class="modal-product-title" id="modalProductTitle">Tài Khoản Tương Tác Chéo 1M XU</h2>
+                <span class="modal-badge" id="modalBadge">Bán chạy</span>
+                <div class="modal-price" id="modalPrice">11.000đ</div>
+                <p class="modal-description" id="modalDescription">xu tương tác cheo đúng để buff dịch vụ facebook,
+                    instagram, tiktok</p>
+
+                <div class="modal-share">
+                    <span>Chia sẻ:</span>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="modal-right">
+                <h3 class="modal-checkout-title">Thông tin mua hàng</h3>
+
+                <div class="checkout-item">
+                    <span class="checkout-label">Số dư của tôi:</span>
+                    <span class="checkout-value" id="userBalance">0đ</span>
+                </div>
+
+                <div class="checkout-item">
+                    <span class="checkout-label">Số lượng cần mua: (*)</span>
+                    <div class="quantity-control">
+                        <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
+                        <input type="number" class="quantity-input" id="quantityInput" value="1" min="1"
+                            oninput="manualQuantityInput(this)">
+                        <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                </div>
+
+                <div class="checkout-item">
+                    <span class="checkout-label">Mã giảm giá:</span>
+                    <input type="text" class="promo-input" placeholder="Nhập mã giảm giá nếu có"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div class="checkout-item">
+                    <span class="checkout-label">Thành tiền:</span>
+                    <span class="checkout-value highlight" id="subtotal"
+                        style="color: #1877F2; font-size: 18px;">11.000đ</span>
+                </div>
+
+                <div class="total-section" style="border-top: 1px solid #f0f2f5; padding-top: 15px;">
+                    <div class="checkout-item">
+                        <span class="checkout-label">Tổng tiền thanh toán:</span>
+                        <span class="checkout-value highlight" id="total"
+                            style="color: #42B72A; font-size: 22px;">11.000đ</span>
+                    </div>
+                </div>
+
+                <button class="btn-checkout" onclick="checkout()"><i class="fas fa-check-circle"></i> THANH
+                    TOÁN</button>
+                <p style="text-align: center; margin-top: 15px; font-size: 13px; color: #65676b;">Thông tin tài khoản sẽ
+                    được gửi vào lịch sử mua hàng sau khi thanh toán.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Image Modal -->
+    <div id="imageModal" onclick="closeImageModal()">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" src="" alt="Product Detail">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col brand-col">
+                    <div class="footer-logo">
+                        <span style="font-weight: 800; font-size: 20px; color: var(--dark-color); display: block; margin-bottom: 15px;">CLONEGIARE.SHOP</span>
+                    </div>
+                    <p class="footer-desc">
+                        Hệ thống cung cấp Clone Facebook chất lượng, uy tín, giá siêu rẻ đáp ứng mọi nhu cầu của bạn...
+                    </p>
+                </div>
+                
+                <div class="footer-col contact-col">
+                    <h3 class="footer-title">Liên hệ</h3>
+                    <ul class="contact-list">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>abc@gmail.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>0123456789</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Đà Nẵng</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col link-col">
+                    <h3 class="footer-title">Liên kết</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Chính sách</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Liên hệ chúng tôi</a></li>
+                        <li><a href="/api">Tài liệu API</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom-bar">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        © All Copyrights Reserved by CLONEGIARE.SHOP
+                    </div>
+                    <div class="payment-methods">
+                        <i class="fab fa-paypal"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-discover"></i>
+                        <i class="fab fa-cc-visa"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Modal (Login Style) -->
+    <div class="modal-overlay" id="notifyModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Thành công!</h3>
+            <p class="modal-message" id="modalMessage">Hành động của bạn đã được thực hiện.</p>
+            <div class="modal-loader">
+                <div class="loader-bar" id="loaderBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Purchase Modal -->
+    <div class="modal-overlay" id="successPurchaseModal">
+        <div class="modal-card" style="max-width: 600px; text-align: left;">
+            <div
+                style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #f0f2f5; padding-bottom: 15px;">
+                <div style="color: #42B72A; font-size: 24px;"><i class="fas fa-check-circle"></i></div>
+                <h3 class="modal-title" style="margin: 0; font-size: 20px;">Mua hàng thành công</h3>
+            </div>
+            <div id="purchaseDetails"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
+                <button class="btn-checkout" onclick="copyAllAccounts()"
+                    style="width: auto; padding: 8px 16px; font-size: 13px; background: #333; border-radius: 4px;">
+                    <i class="fas fa-copy"></i> Sao chép tất cả
+                </button>
+                <button class="btn-checkout" onclick="closePurchaseModal()"
+                    style="width: auto; padding: 8px 16px; font-size: 13px; background: #eee; color: #333; border-radius: 4px; border: 1px solid #ddd;">Xác
+                    nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Login-style Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Notification modal should be above other modals */
+        #notifyModal {
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 32px;
+        }
+
+        .icon-success {
+            background: rgba(66, 183, 42, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .icon-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            color: #64748b;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .modal-loader {
+            width: 100%;
+            height: 4px;
+            background: #f1f5f9;
+            border-radius: 2px;
+            margin-top: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 1.5s linear;
+        }
+
+        .purchase-detail-item {
+            background: #f0f2f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .purchase-detail-item strong {
+            color: var(--dark-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .purchase-detail-item code {
+            font-size: 13px;
+            word-break: break-all;
+            color: #1877F2;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* Hide number input spinners */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+
+    <script src="/static/js/index.js"></script>
+</body>
+
+</html>

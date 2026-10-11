@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Giao Dịch - FBStore</title>
+<link rel="shortcut icon" href="../../static/img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/pages/history.css">
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="site-topbar">
+            <div class="container topbar-container">
+                <div class="topbar-left">
+                    Chào mừng bạn đến với website bán clone Facebook giá rẻ
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-globe"></i> Vietnamese <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-item dropdown">
+                        <i class="fas fa-wallet"></i> VND <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                    <div class="topbar-links">
+                        <a href="#">Chính sách</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Liên hệ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="header-top">
+                <a href="/" class="logo">
+                    <i class="fab fa-facebook-square"></i>
+                    <span>Clonegiare.shop</span>
+                </a>
+
+                                <div class="header-actions">
+                    <div class="header-actions-inner" id="headerActionsInner">
+                        <div class="mobile-menu-close" onclick="toggleMobileHeaderMenu(event)">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="misc-container" id="miscContainer" onclick="toggleMiscMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-ellipsis-v"></i>
+                                <span>Khác</span></a>
+                            <div class="misc-dropdown" id="miscDropdown">
+                                <a href="/api">API</a>
+                                <a href="/support">Hỗ trợ</a>
+                                <a href="/blog">Blog</a>
+                            </div>
+                        </div>
+                        <div class="tools-container auth-required" id="toolsContainer" style="display: none;"
+                            onclick="toggleToolsMenu(event)">
+                            <a href="javascript:void(0)" class="btn-header"><i class="fas fa-tools"></i> <span>Công
+                                    cụ</span></a>
+                            <div class="tools-dropdown" id="toolsDropdown">
+                                <a href="#/check-live">Check Live UID</a>
+                                <a href="#/random-face">Random Face</a>
+                            </div>
+                        </div>
+                        <a href="/deposit" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-wallet"></i> <span>Nạp tiền</span></a>
+                        <a href="/history" class="btn-header auth-required desktop-only" style="display: none;"><i
+                                class="fas fa-history"></i> <span>Lịch sử</span></a>
+                        <div class="user-profile-container">
+                            <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu(event)">?</div>
+                            <div class="user-dropdown" id="userDropdown">
+                                <a href="/profile"><i class="fas fa-user-circle"></i> Hồ sơ cá nhân</a>
+                                <a href="/history"><i class="fas fa-history"></i> Lịch sử đơn hàng</a>
+                                <a href="/deposit"><i class="fas fa-wallet"></i> Nạp tiền</a>
+                                <div class="divider"></div>
+                                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-toggle" onclick="toggleMobileHeaderMenu(event)">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <script>
+                        function toggleMobileHeaderMenu(event) {
+                            if (event) event.stopPropagation();
+                            const inner = document.getElementById('headerActionsInner');
+                            if (inner) {
+                                inner.classList.toggle('active');
+                            }
+                        }
+                        document.addEventListener('click', function(event) {
+                            const headerActionsInner = document.getElementById('headerActionsInner');
+                            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                            if (headerActionsInner && headerActionsInner.classList.contains('active')) {
+                                if (!headerActionsInner.contains(event.target) && (!mobileMenuToggle || !mobileMenuToggle.contains(event.target))) {
+                                    headerActionsInner.classList.remove('active');
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+
+
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="history-wrapper">
+            <!-- Sidebar Navigation -->
+            <aside class="history-sidebar">
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar">TK</div>
+                    <div class="sidebar-username">Nguyễn Văn A</div>
+                    <div class="sidebar-role">Thành viên Bạc</div>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li><a href="javascript:void(0)" class="active" onclick="switchTab('order-history', this)">
+                            <i class="fas fa-shopping-cart"></i> Lịch sử đơn hàng</a>
+                    </li>
+                    <li><a href="javascript:void(0)" onclick="switchTab('activity-log', this)">
+                            <i class="fas fa-user-clock"></i> Nhật ký hoạt động</a>
+                    </li>
+                    <li><a href="javascript:void(0)" onclick="switchTab('balance-history', this)">
+                            <i class="fas fa-exchange-alt"></i> Biến động số dư</a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-footer">
+                    <strong>Hỗ trợ khách hàng</strong>
+                    <span>Hotline: 0123 456 789</span>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="history-content">
+
+                <!-- Section 1: Order History -->
+                <div id="order-history" class="card active fade-in">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-shopping-cart"></i> Lịch Sử Đơn Hàng</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="note-alert history-note">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Lưu ý: Tất cả đơn hàng sẽ bị xóa sau 1 Ngày. Quý khách vui lòng tải về đơn hàng để
+                                backup dữ liệu sau khi mua để tránh mất đơn hàng.</span>
+                        </div>
+
+                        <div class="filter-row">
+                            <input type="text" id="order-code-filter" class="filter-input" placeholder="Mã đơn hàng">
+                            <input type="date" id="order-date-filter" class="filter-input" placeholder="Chọn thời gian">
+                            <button class="btn-filter btn-search" onclick="handleSearch('orders')"><i
+                                    class="fas fa-search"></i> Tìm kiếm</button>
+                            <button class="btn-filter" onclick="clearFilter('orders')"><i class="fas fa-trash-alt"></i>
+                                Bỏ lọc</button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Thanh toán</th>
+                                        <th>Ghi chú</th>
+                                        <th>Thời gian</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="txt-bold">ORD-992123</td>
+                                        <td>Via Cổ XMDT New 2024</td>
+                                        <td>1</td>
+                                        <td>50,000xu</td>
+                                        <td>No note</td>
+                                        <td>10/01/2026 05:24</td>
+                                        <td>
+                                            <a href="order-details.html" class="badge badge-primary action-badge"><i
+                                                    class="fas fa-eye"></i></a>
+                                            <a href="#" class="badge badge-success action-badge"><i
+                                                    class="fas fa-download"></i></a>
+                                            <button class="badge badge-danger btn-icon-only"><i
+                                                    class="fas fa-trash-alt"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7" class="empty-state">
+                                            <i class="fas fa-box-open empty-icon"></i>
+                                            Không tìm thấy dữ liệu bổ sung
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="order-pagination" class="pagination" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Activity Log -->
+                <div id="activity-log" class="card fade-in">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-user-clock"></i> Nhật Ký Hoạt Động</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="filter-row">
+                            <input type="text" id="log-action-filter" class="filter-input" placeholder="Thao tác">
+                            <input type="text" id="log-ip-filter" class="filter-input" placeholder="Địa chỉ IP">
+                            <input type="date" id="log-date-filter" class="filter-input">
+                            <button class="btn-filter btn-search" onclick="handleSearch('logs')"><i
+                                    class="fas fa-search"></i> Tìm kiếm</button>
+                            <button class="btn-filter" onclick="clearFilter('logs')"><i class="fas fa-trash-alt"></i> Bỏ
+                                lọc</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Thao tác</th>
+                                        <th>Địa chỉ IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2026-01-02 00:34:55</td>
+                                        <td>Create an account</td>
+                                        <td>***.***.47.173</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2026-01-10 05:10:12</td>
+                                        <td>Login Success</td>
+                                        <td>14.161.xx.xxx</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Balance Fluctuations -->
+                <div id="balance-history" class="card fade-in">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fas fa-exchange-alt"></i> Biến Động Số Dư</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="filter-row">
+                            <input type="text" id="balance-desc-filter" class="filter-input" placeholder="Lý do">
+                            <input type="date" id="balance-date-filter" class="filter-input">
+                            <button class="btn-filter btn-search" onclick="handleSearch('balance')"><i
+                                    class="fas fa-search"></i> Tìm kiếm</button>
+                            <button class="btn-filter" onclick="clearFilter('balance')"><i class="fas fa-trash-alt"></i>
+                                Bỏ lọc</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Loại</th>
+                                        <th>Số dư đầu</th>
+                                        <th>Thay đổi</th>
+                                        <th>Số dư sau</th>
+                                        <th>Lý do</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2026-01-06 01:05:27</td>
+                                        <td>30.980xu</td>
+                                        <td class="txt-amount-neg">-29.700xu</td>
+                                        <td class="txt-bold">1.280xu</td>
+                                        <td>Thanh toán đơn hàng mua tài khoản Fb Ip Việt Name Việt...</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2026-01-06 01:05:07</td>
+                                        <td>980xu</td>
+                                        <td class="txt-amount-pos">+30.000xu</td>
+                                        <td class="txt-bold">30.980xu</td>
+                                        <td>Nạp tiền tự động qua ACB (#2768 - mij581...)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="balance-pagination" class="pagination" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col brand-col">
+                    <div class="footer-logo">
+                        <span style="font-weight: 800; font-size: 20px; color: var(--dark-color); display: block; margin-bottom: 15px;">CLONEGIARE.SHOP</span>
+                    </div>
+                    <p class="footer-desc">
+                        Hệ thống cung cấp Clone Facebook chất lượng, uy tín, giá siêu rẻ đáp ứng mọi nhu cầu của bạn...
+                    </p>
+                </div>
+                
+                <div class="footer-col contact-col">
+                    <h3 class="footer-title">Liên hệ</h3>
+                    <ul class="contact-list">
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>abc@gmail.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>0123456789</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Đà Nẵng</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col link-col">
+                    <h3 class="footer-title">Liên kết</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Chính sách</a></li>
+                        <li><a href="#">Câu hỏi thường gặp</a></li>
+                        <li><a href="#">Liên hệ chúng tôi</a></li>
+                        <li><a href="/api">Tài liệu API</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom-bar">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        © All Copyrights Reserved by CLONEGIARE.SHOP
+                    </div>
+                    <div class="payment-methods">
+                        <i class="fab fa-paypal"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-discover"></i>
+                        <i class="fab fa-cc-visa"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    </script>
+</body>
+<script src="/static/js/history.js"></script>
+
+</html>
